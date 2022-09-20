@@ -1,18 +1,16 @@
-import React, { useState } from 'react'
-import { useHistory } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
-import { toast } from 'react-toastify'
 import { yupResolver } from '@hookform/resolvers/yup'
-import * as Yup from 'yup'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
+import React, { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useHistory } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import * as Yup from 'yup'
 
 import api from '../../../services/api'
 
-import {ErrorMessage} from '../../../components'
-import maskCode from '../../../utils/maskCode'
+import * as Atoms from '../../../components/Atoms'
 
-
-import { Container, Label, Input, ButtonStyle, LabelUpload } from './styles'
+import * as S from './styles'
 
 function NewCategorie() {
   const [fileName, setFileName] = useState(null)
@@ -48,14 +46,14 @@ function NewCategorie() {
   } = useForm({ resolver: yupResolver(schema) })
 
   return (
-    <Container>
+    <S.Container>
       <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <div>
-          <Label>Nome:</Label>
-          <Input type="text"  onInput={maskCode} {...register('name')} />
-          <ErrorMessage>{errors.name?.message}</ErrorMessage>
+          <S.Label>Nome:</S.Label>
+          <S.Input type="text" {...register('name')} />
+          <Atoms.ErrorMessage>{errors.name?.message}</Atoms.ErrorMessage>
           <div>
-            <LabelUpload>
+            <S.LabelUpload>
               {fileName || (
                 <>
                   <CloudUploadIcon />
@@ -69,14 +67,14 @@ function NewCategorie() {
                   setFileName(value.target.files[0]?.name)
                 }}
               />
-            </LabelUpload>
-            <ErrorMessage>{errors.file?.message}</ErrorMessage>
+            </S.LabelUpload>
+            <Atoms.ErrorMessage>{errors.file?.message}</Atoms.ErrorMessage>
           </div>
 
-          <ButtonStyle type="submit"> Adicionar Categoria </ButtonStyle>
+          <S.ButtonStyle type="submit"> Adicionar Categoria </S.ButtonStyle>
         </div>
       </form>
-    </Container>
+    </S.Container>
   )
 }
 

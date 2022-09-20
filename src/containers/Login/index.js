@@ -1,7 +1,7 @@
-import React,{useState} from 'react'
-import { toast } from 'react-toastify'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useHistory } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as Yup from 'yup'
@@ -10,26 +10,17 @@ import api from '../../services/api'
 
 import { useUser } from '../../hooks/UserContext'
 
+import { MdVisibility, MdVisibilityOff } from 'react-icons/md'
 import Logo from '../../assets/login/logo-codeburger.svg'
-import {MdVisibility, MdVisibilityOff } from 'react-icons/md'
 
+import * as Atoms from '../../components/Atoms'
 
-import { Button,ErrorMessage } from '../../components'
+import * as S from './styles'
 
-import {
-  Container,
-  ContainerItens,
-  Label,
-  Input,
-  ContainerButton,
-  CadastrarLink
-} from './styles'
-
-export function Login () {
+export function Login() {
   const history = useHistory()
   const { putUserData } = useUser()
   const [showPassword, setShowPassword] = useState(false)
-
 
   const schema = Yup.object().shape({
     email: Yup.string()
@@ -37,27 +28,27 @@ export function Login () {
       .required('O email é obrigatório'),
     password: Yup.string()
       .required('A senha é obrigátoria')
-      .min(6, 'A senha deve ter pelo menos 6 digítos')
+      .min(6, 'A senha deve ter pelo menos 6 digítos'),
   })
 
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
   } = useForm({
-    resolver: yupResolver(schema)
+    resolver: yupResolver(schema),
   })
 
-  const onSubmit = async clientData => {
+  const onSubmit = async (clientData) => {
     const { data } = await toast.promise(
       api.post('sessions', {
         email: clientData.email,
-        password: clientData.password
+        password: clientData.password,
       }),
       {
         pending: 'Verificando seus dados',
         success: 'Login Efetuado!',
-        error: 'Verifique seus Dados!'
+        error: 'Verifique seus Dados!',
       }
     )
     putUserData(data)
@@ -67,32 +58,31 @@ export function Login () {
     }, 2000)
   }
 
-  
   const handleShowPassword = () => {
     setShowPassword((show) => !show)
   }
 
   return (
-    <Container>
-      <ContainerItens>
-        <img src={Logo} alt='logo-codeburger' />
+    <S.Container>
+      <S.ContainerItens>
+        <img src={Logo} alt="logo-codeburger" />
         <h1>Login</h1>
         <form noValidate onSubmit={handleSubmit(onSubmit)}>
-          <Label> Email</Label>
-          <Input
-            type='email'
+          <Atoms.InputComponent
+            type="email"
+            label="Email"
+            name="email"
             {...register('email')}
-            error={errors.email?.message}
+            error={errors.email}
           />
-          <ErrorMessage> {errors.email?.message}</ErrorMessage>
 
-          <Label> Senha</Label>
           <div>
-            <Input
+            <Atoms.InputComponent
+              label="Senha"
               type={showPassword ? 'text' : 'password'}
               {...register('password')}
-              error={errors.password?.message}
-          />
+              error={errors.password}
+            />
             <span>
               {showPassword ? (
                 <MdVisibility
@@ -111,30 +101,29 @@ export function Login () {
               )}
             </span>
           </div>
-          
-          <ErrorMessage> {errors.password?.message}</ErrorMessage>
-          <ContainerButton>
-            <Button type='submit' style={{ marginTop: '6vh' }}>
+
+          <Atoms.ErrorMessage> {errors.password?.message}</Atoms.ErrorMessage>
+          <S.ContainerButton>
+            <Atoms.Button type="submit" style={{ marginTop: '6vh' }}>
               Entrar
-            </Button>
-          </ContainerButton>
-          <CadastrarLink>
-          Não possui conta? {''}
-          <Link
-            style={{
-              color: 'white',
-              alignItems: 'center',
-              fontWeight: 'bold',
-              textDecoration:'none'
-            }}
-            to='/cadastro'
-          >
-            Se cadastre
-          </Link>
-        </CadastrarLink>
+            </Atoms.Button>
+          </S.ContainerButton>
+          <S.CadastrarLink>
+            Não possui conta? {''}
+            <Link
+              style={{
+                color: 'white',
+                alignItems: 'center',
+                fontWeight: 'bold',
+                textDecoration: 'none',
+              }}
+              to="/cadastro"
+            >
+              Se cadastre
+            </Link>
+          </S.CadastrarLink>
         </form>
-       
-      </ContainerItens>
-    </Container>
+      </S.ContainerItens>
+    </S.Container>
   )
 }

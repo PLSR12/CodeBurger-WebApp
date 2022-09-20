@@ -2,16 +2,16 @@ import React from 'react'
 
 import BannerHome from '../../assets/home/banner-homepage.svg'
 
-import { OffersCarousel, CategoryCarousel } from '../../components'
+import * as Organisms from '../../components/Organisms'
 
-import { Container, HomeImage } from './styles'
+import * as S from './styles'
 
-export function Home () {
+export function Home() {
   return (
-    <Container>
-      <HomeImage src={BannerHome} alt='banner da home' />
-      <CategoryCarousel />
-      <OffersCarousel />
-    </Container>
+    <S.Container>
+      <S.HomeImage src={BannerHome} alt="banner da home" />
+      <Organisms.CategoryCarousel />
+      <Organisms.OffersCarousel />
+    </S.Container>
   )
 }

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Button } from '../../../components'
+import { Button } from '../../../components/Atoms/Button'
 
 export const Container = styled.div`
   display: flex;
@@ -14,7 +14,7 @@ export const Container = styled.div`
     padding: 30px;
     display: flex;
     flex-direction: column;
-    gap:25px;
+    gap: 25px;
   }
 `
 export const Label = styled.p`
@@ -27,7 +27,7 @@ export const Input = styled.input`
   width: 100%;
   height: 40px;
   background: #ffffff;
-  padding-left:10px;
+  padding-left: 10px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   outline: none;
@@ -58,9 +58,9 @@ export const ContainerInput = styled.div`
   align-items: baseline;
   gap: 10px;
 
-  input{
+  input {
     width: 15px;
     height: 15px;
-    cursor:pointer;
+    cursor: pointer;
   }
 `

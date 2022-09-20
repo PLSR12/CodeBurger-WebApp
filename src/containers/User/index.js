@@ -2,7 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { React } from 'react'
 import { useForm } from 'react-hook-form'
 import * as Yup from 'yup'
-import { ErrorMessage } from '../../components'
+import * as Atoms from '../../components/Atoms'
 import { useUser } from '../../hooks/UserContext'
 
 import * as S from './styles'
@@ -34,12 +34,12 @@ export function User() {
             {...register('name')}
             defaultValue={userData.name}
           />
-          <ErrorMessage>{errors.name?.message}</ErrorMessage>
+          <Atoms.ErrorMessage>{errors.name?.message}</Atoms.ErrorMessage>
         </div>
         <div>
           <S.Label> Preço </S.Label>
           <S.Input type="number" {...register('price')} />
-          <ErrorMessage>{errors.price?.message}</ErrorMessage>
+          <Atoms.ErrorMessage>{errors.price?.message}</Atoms.ErrorMessage>
         </div>
 
         <S.ContainerInput>

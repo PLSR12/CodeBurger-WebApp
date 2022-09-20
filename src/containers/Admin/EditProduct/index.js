@@ -1,42 +1,34 @@
-import React, { useState, useEffect } from 'react'
+import { yupResolver } from '@hookform/resolvers/yup'
+import CloudUploadIcon from '@mui/icons-material/CloudUpload'
+import React, { useEffect, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
-import { useForm, Controller } from 'react-hook-form'
 import ReactSelect from 'react-select'
 import { toast } from 'react-toastify'
-import { yupResolver } from '@hookform/resolvers/yup'
 import * as Yup from 'yup'
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 
 import api from '../../../services/api'
 
-import { ErrorMessage } from '../../../components'
-import maskCode from '../../../utils/maskCode'
+import * as Atoms from '../../../components/Atoms'
 
-import GenericModal from '../../../components/Modal/GenericModal'
-import { ModalContentLoading } from '../../../components/Modal/styles'
 import ImgLoading from '../../../assets/img/loading.gif'
+import GenericModal from '../../../components/Molecules/Modal/GenericModal'
+import { ModalContentLoading } from '../../../components/Molecules/Modal/styles'
 
-import {
-  Container,
-  Label,
-  Input,
-  ButtonStyle,
-  LabelUpload,
-  ContainerInput
-} from './styles'
+import * as S from './styles'
 
-function EditProduct () {
+function EditProduct() {
   const [fileName, setFileName] = useState(null)
   const [categories, setCategories] = useState([])
   const [modalIsOpen, setModalIsOpen] = useState(true)
   const {
     push,
     location: {
-      state: { product }
-    }
+      state: { product },
+    },
   } = useHistory()
 
-  const onSubmit = async data => {
+  const onSubmit = async (data) => {
     const productDataFormData = new FormData()
 
     productDataFormData.append('name', data.name)
@@ -48,7 +40,7 @@ function EditProduct () {
       api.put(`products/${product.id}`, productDataFormData),
       {
         success: 'Produto editado com sucesso',
-        error: 'Falha ao editar o produto'
+        error: 'Falha ao editar o produto',
       }
     )
 
@@ -61,18 +53,18 @@ function EditProduct () {
     name: Yup.string().required('O name é obrigatório'),
     price: Yup.string().required('O preço é obrigátoria'),
     category: Yup.object().required('Escolha uma categoria'),
-    offer: Yup.boolean()
+    offer: Yup.boolean(),
   })
 
   const {
     register,
     handleSubmit,
     control,
-    formState: { errors }
+    formState: { errors },
   } = useForm({ resolver: yupResolver(schema) })
 
   useEffect(() => {
-    async function loadCategories () {
+    async function loadCategories() {
       const { data } = await api.get('categories')
 
       setCategories(data)
@@ -82,36 +74,34 @@ function EditProduct () {
   }, [])
 
   return (
-    <Container>
-      <GenericModal  isOpen={modalIsOpen}>
-    <ModalContentLoading >
-              <h2>Carregando...</h2>
-              <img src={ImgLoading} alt="Loading" />
-            </ModalContentLoading>
+    <S.Container>
+      <GenericModal isOpen={modalIsOpen}>
+        <ModalContentLoading>
+          <h2>Carregando...</h2>
+          <img src={ImgLoading} alt="Loading" />
+        </ModalContentLoading>
       </GenericModal>
       <form noValidate onSubmit={handleSubmit(onSubmit)}>
         <div>
-          <Label>Nome:</Label>
-          <Input
-            type='text'
+          <S.Label>Nome:</S.Label>
+          <S.Input
+            type="text"
             {...register('name')}
-            onInput={maskCode}
             defaultValue={product.name}
           />
-          <ErrorMessage>{errors.name?.message}</ErrorMessage>
+          <Atoms.ErrorMessage>{errors.name?.message}</Atoms.ErrorMessage>
         </div>
         <div>
-          <Label> Preço </Label>
-          <Input
-            type='number'
+          <S.Label> Preço </S.Label>
+          <S.Input
+            type="number"
             {...register('price')}
-            onInput={maskCode}
             defaultValue={product.price}
           />
-          <ErrorMessage>{errors.price?.message}</ErrorMessage>
+          <Atoms.ErrorMessage>{errors.price?.message}</Atoms.ErrorMessage>
         </div>
         <div>
-          <LabelUpload>
+          <S.LabelUpload>
             {fileName || (
               <>
                 <CloudUploadIcon />
@@ -119,19 +109,19 @@ function EditProduct () {
               </>
             )}
             <input
-              type='file'
-              accept='image/png , image/jpeg'
+              type="file"
+              accept="image/png , image/jpeg"
               {...register('file')}
-              onChange={value => {
+              onChange={(value) => {
                 setFileName(value.target.files[0]?.name)
               }}
             />
-          </LabelUpload>
-          <ErrorMessage>{errors.file?.message}</ErrorMessage>
+          </S.LabelUpload>
+          <Atoms.ErrorMessage>{errors.file?.message}</Atoms.ErrorMessage>
         </div>
         <div>
           <Controller
-            name='category'
+            name="category"
             control={control}
             defaultValue={product.category}
             render={({ field }) => {
@@ -139,28 +129,28 @@ function EditProduct () {
                 <ReactSelect
                   {...field}
                   options={categories}
-                  getOptionLabel={cat => cat.name}
-                  getOptionValue={cat => cat.id}
+                  getOptionLabel={(cat) => cat.name}
+                  getOptionValue={(cat) => cat.id}
                   defaultValue={product.category}
                 />
               )
             }}
           ></Controller>
-          <ErrorMessage>{errors.category?.message}</ErrorMessage>
+          <Atoms.ErrorMessage>{errors.category?.message}</Atoms.ErrorMessage>
         </div>
 
-        <ContainerInput>
+        <S.ContainerInput>
           <input
-            type='checkbox'
+            type="checkbox"
             {...register('offer')}
             defaultChecked={product.offer}
           />
-          <Label> Produto em oferta?</Label>
-        </ContainerInput>
+          <S.Label> Produto em oferta?</S.Label>
+        </S.ContainerInput>
 
-        <ButtonStyle type='submit'> Editar Produto </ButtonStyle>
+        <S.ButtonStyle type="submit"> Editar Produto </S.ButtonStyle>
       </form>
-    </Container>
+    </S.Container>
   )
 }
 
