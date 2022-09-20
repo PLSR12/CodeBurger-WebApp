@@ -13,7 +13,7 @@ export const SelectComponent = React.forwardRef(
           placeholder={placeholder}
           {...props}
         >
-          <option value=""></option>
+          <option value="">Selecione:</option>
           {options.map((option, index) => (
             <option key={index} value={option.id}>
               {option.label}
