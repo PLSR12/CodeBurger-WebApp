@@ -1,39 +1,37 @@
-import React from 'react'
 import PropTypes from 'prop-types'
+import React from 'react'
 import { toast } from 'react-toastify'
 
-import { useCart } from '../../hooks/CartContext'
+import { useCart } from '../../../hooks/CartContext'
+import * as Atoms from '../../Atoms'
+import * as S from './styles'
 
-import { Container, Image, ProductName, ProductPrice } from './styles'
-
-import { Button } from '../'
-
-export function CardProducts ({ product }) {
+export function CardProducts({ product }) {
   const { putProductsInCart } = useCart()
 
   return (
-    <Container>
-      <Image src={product.url} alt='foto do produto' />
+    <S.Container>
+      <S.Image src={product.url} alt="foto do produto" />
       <div>
-        <ProductName> {product.name} </ProductName> 
-        <ProductPrice> {product.formatedPrice}</ProductPrice>
-        <Button
+        <S.ProductName> {product.name} </S.ProductName>
+        <S.ProductPrice> {product.formatedPrice}</S.ProductPrice>
+        <Atoms.Button
           style={{ width: '1rem' }}
           onClick={() => {
             putProductsInCart(product)
             toast.success('Adicionado ao carrinho!', {
               position: 'top-right',
-              autoClose: 1000
+              autoClose: 1000,
             })
           }}
         >
           Adicionar
-        </Button>
+        </Atoms.Button>
       </div>
-    </Container>
+    </S.Container>
   )
 }
 
 CardProducts.propTypes = {
-  product: PropTypes.object
+  product: PropTypes.object,
 }

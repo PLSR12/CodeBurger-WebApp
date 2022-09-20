@@ -1,25 +1,25 @@
 import React from 'react'
 
-import { useCart } from '../../hooks/CartContext'
-import formatCurrency from '../../utils/formatCurrency'
-import { Container, Header, Body, EmptyCart } from './styles'
+import { useCart } from '../../../hooks/CartContext'
+import formatCurrency from '../../../utils/formatCurrency'
+import * as S from './styles'
 
 export function CartItems() {
   const { cartProducts, increaseProducts, decreaseProducts } = useCart()
   return (
-    <Container>
-      <Header>
+    <S.Container>
+      <S.Header>
         <p></p>
         <p>Itens</p>
         <p>Preço</p>
         <p style={{ paddingRight: '30px' }}>Quantidade</p>
         <p>Total</p>
-      </Header>
+      </S.Header>
 
       {cartProducts && cartProducts.length > 0 ? (
-        cartProducts.map(product => (
-          <Body key={product.id}>
-            <img src={product.url} alt='imagem produto'  />
+        cartProducts.map((product) => (
+          <S.Body key={product.id}>
+            <img src={product.url} alt="imagem produto" />
             <p>{product.name}</p>
             <p>{product.formatedPrice}</p>
             <div className="quantity-container">
@@ -28,11 +28,11 @@ export function CartItems() {
               <button onClick={() => increaseProducts(product.id)}>+</button>
             </div>
             <p>{formatCurrency(product.quantity * product.price)}</p>
-          </Body>
+          </S.Body>
         ))
       ) : (
-        <EmptyCart>Carrinho Vazio</EmptyCart>
+        <S.EmptyCart>Carrinho Vazio</S.EmptyCart>
       )}
-    </Container>
+    </S.Container>
   )
 }

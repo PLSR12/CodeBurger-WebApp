@@ -40,30 +40,26 @@ export const ContainerItems = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-`
 
-export const H1 = styled.h1`
-  font-family: 'Source Sans Pro';
-  font-style: normal;
-  font-weight: 700;
-  font-size: 18px;
-  line-height: 120%;
+  h1 {
+    font-family: 'Source Sans Pro';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 120%;
+    margin: 10px 0px;
+    color: #424242;
+  }
 
-  margin: 10px 0px;
-
-  color: #424242;
-`
-
-export const H2 = styled.h2`
-  font-family: 'Source Sans Pro';
-  font-style: normal;
-  font-weight: 700;
-  font-size: 17px;
-  line-height: 120%;
-
-  margin: 0px 8px;
-
-  color: #424242;
+  h2 {
+    font-family: 'Source Sans Pro';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 17px;
+    line-height: 120%;
+    margin: 0px 8px;
+    color: #424242;
+  }
 `
 
 export const Image = styled.img`
