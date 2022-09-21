@@ -1,22 +1,19 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import React, { useEffect, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
-import ReactSelect from 'react-select'
 import { toast } from 'react-toastify'
 import * as Yup from 'yup'
 
 import api from '../../../services/api'
 
-import * as Atoms from '../../../components/Atoms'
-
 import ImgLoading from '../../../assets/img/loading.gif'
+import * as Atoms from '../../../components/Atoms'
 import GenericModal from '../../../components/Molecules/Modal/GenericModal'
 import { ModalContentLoading } from '../../../components/Molecules/Modal/styles'
-
+import { maskCurrencyInput } from '../../../utils/maskCurrencyInput'
 import * as S from './styles'
-
 function EditProduct() {
   const [fileName, setFileName] = useState(null)
   const [categories, setCategories] = useState([])
@@ -32,8 +29,8 @@ function EditProduct() {
     const productDataFormData = new FormData()
 
     productDataFormData.append('name', data.name)
-    productDataFormData.append('price', data.price)
-    productDataFormData.append('category_id', data.category.id)
+    productDataFormData.append('price', customParseFloat(data.price))
+    productDataFormData.append('category', data.category)
     productDataFormData.append('offer', data.offer)
 
     await toast.promise(
@@ -49,17 +46,29 @@ function EditProduct() {
     }, 2000)
   }
 
+  const customParseFloat = (value) => {
+    return parseFloat(value.replace(/\D/g, '')) / 100
+  }
+
+  function maskCurrency(valor, locale = 'pt-BR', currency = 'BRL') {
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency,
+    }).format(valor)
+  }
+
   const schema = Yup.object().shape({
     name: Yup.string().required('O name é obrigatório'),
     price: Yup.string().required('O preço é obrigátoria'),
-    category: Yup.object().required('Escolha uma categoria'),
+    category: Yup.string().required('Escolha uma categoria'),
     offer: Yup.boolean(),
   })
 
   const {
     register,
     handleSubmit,
-    control,
+    setValue,
+    reset,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) })
 
@@ -67,11 +76,29 @@ function EditProduct() {
     async function loadCategories() {
       const { data } = await api.get('categories')
 
-      setCategories(data)
-      setModalIsOpen(false)
+      data.map((category) => {
+        const categroyId = category.id
+        const categoryLabel = category.name
+
+        const categoryOption = {
+          id: `${categroyId}`,
+          label: `${categoryLabel}`,
+        }
+
+        setCategories((prevState) => [...prevState, categoryOption])
+        setModalIsOpen(false)
+      })
     }
     loadCategories()
   }, [])
+  useEffect(() => {
+    reset(product)
+    setValue('price', maskCurrency(product?.price))
+
+    setValue('file', product?.url)
+    setValue('category', product?.category_id)
+    setFileName(product?.path)
+  }, [product, categories])
 
   return (
     <S.Container>
@@ -81,75 +108,62 @@ function EditProduct() {
           <img src={ImgLoading} alt="Loading" />
         </ModalContentLoading>
       </GenericModal>
-      <form noValidate onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <S.Label>Nome:</S.Label>
-          <S.Input
+      <Atoms.Box>
+        <form noValidate onSubmit={handleSubmit(onSubmit)}>
+          <Atoms.InputComponent
             type="text"
+            label="Nome"
             {...register('name')}
-            defaultValue={product.name}
+            error={errors.name}
+            style={{ marginBottom: '10px' }}
+            placeholder="Digite o Nome:"
           />
-          <Atoms.ErrorMessage>{errors.name?.message}</Atoms.ErrorMessage>
-        </div>
-        <div>
-          <S.Label> Preço </S.Label>
-          <S.Input
-            type="number"
+
+          <Atoms.InputComponent
+            type="text"
+            label="Preço"
+            min={0}
             {...register('price')}
-            defaultValue={product.price}
+            error={errors.price}
+            onInput={maskCurrencyInput}
+            placeholder="Digite o Preço:"
           />
-          <Atoms.ErrorMessage>{errors.price?.message}</Atoms.ErrorMessage>
-        </div>
-        <div>
-          <S.LabelUpload>
-            {fileName || (
-              <>
-                <CloudUploadIcon />
-                Caregue a imagem do produto
-              </>
-            )}
-            <input
-              type="file"
-              accept="image/png , image/jpeg"
-              {...register('file')}
-              onChange={(value) => {
-                setFileName(value.target.files[0]?.name)
-              }}
+          <div>
+            <S.LabelUpload>
+              {fileName || (
+                <>
+                  <CloudUploadIcon />
+                  Caregue a imagem do produto
+                </>
+              )}
+
+              <input
+                type="file"
+                accept="image/png , image/jpeg"
+                {...register('file')}
+                onChange={(value) => {
+                  setFileName(value.target.files[0]?.name)
+                }}
+              />
+            </S.LabelUpload>
+            <Atoms.ErrorMessage>{errors.file?.message}</Atoms.ErrorMessage>
+          </div>
+          <div>
+            <Atoms.SelectComponent
+              label={'Selecione uma Categoria'}
+              options={categories}
+              {...register('category')}
+              error={errors.category}
             />
-          </S.LabelUpload>
-          <Atoms.ErrorMessage>{errors.file?.message}</Atoms.ErrorMessage>
-        </div>
-        <div>
-          <Controller
-            name="category"
-            control={control}
-            defaultValue={product.category}
-            render={({ field }) => {
-              return (
-                <ReactSelect
-                  {...field}
-                  options={categories}
-                  getOptionLabel={(cat) => cat.name}
-                  getOptionValue={(cat) => cat.id}
-                  defaultValue={product.category}
-                />
-              )
-            }}
-          ></Controller>
-          <Atoms.ErrorMessage>{errors.category?.message}</Atoms.ErrorMessage>
-        </div>
+          </div>
 
-        <S.ContainerInput>
-          <input
-            type="checkbox"
-            {...register('offer')}
-            defaultChecked={product.offer}
-          />
-          <S.Label> Produto em oferta?</S.Label>
-        </S.ContainerInput>
-
-        <S.ButtonStyle type="submit"> Editar Produto </S.ButtonStyle>
-      </form>
+          <S.ContainerInput>
+            <input type="checkbox" {...register('offer')} />
+            <S.Label> Produto em oferta?</S.Label>
+          </S.ContainerInput>
+          <S.ButtonStyle type="submit"> Adicionar Produto </S.ButtonStyle>
+        </form>
+      </Atoms.Box>
     </S.Container>
   )
 }

@@ -2,40 +2,23 @@ import styled from 'styled-components'
 import { Button } from '../../../components/Atoms/Button'
 
 export const Container = styled.div`
-  display: flex;
-  min-width: 100%;
-  height: 100vh;
-  justify-content: center;
-  align-items: center;
-
   form {
-    background-color: #565656;
     border-radius: 10px;
     padding: 30px;
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 25;
   }
 `
 export const Label = styled.p`
   font-size: 15px;
-  color: #fff;
+  color: #000;
   margin-bottom: 5px;
 `
 
-export const Input = styled.input`
-  width: 280px;
-  height: 40px;
-  background: #ffffff;
-  padding-left: 10px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  outline: none;
-  border: none;
-
-  @media screen and (max-width: 1000px) {
-    width: 100%;
-  }
+export const BoxArea = styled.div`
+  margin-top: 15px;
+  margin-bottom: 15px;
 `
 
 export const ButtonStyle = styled(Button)`
@@ -43,23 +26,28 @@ export const ButtonStyle = styled(Button)`
   margin-top: 25px;
 `
 export const LabelUpload = styled.label`
+  margin-top: 35px;
+  margin-bottom: 25px;
   cursor: pointer;
   display: flex;
-  border: 1px #ffff dashed;
+  border: 1px #000 dashed;
   border-radius: 5px;
-  padding: 15px;
+  padding: 35px;
   gap: 5px;
   align-items: center;
+  color: #000;
 
   input {
     width: 1px;
     opacity: 0;
   }
 `
+
 export const ContainerInput = styled.div`
   display: flex;
   align-items: baseline;
   gap: 10px;
+  margin-top: 20px;
 
   input {
     width: 15px;
