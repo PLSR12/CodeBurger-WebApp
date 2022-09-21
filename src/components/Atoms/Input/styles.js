@@ -16,6 +16,7 @@ export const Container = styled.div`
     padding: 14px 12px;
     border-radius: 4px;
     border: 1px solid #ced4da;
+    margin-bottom: 15px;
 
     overflow: hidden;
     text-overflow: ellipsis;
