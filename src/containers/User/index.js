@@ -26,28 +26,55 @@ export function User() {
   } = useForm({ resolver: yupResolver(schema) })
   return (
     <S.Container>
-      <form noValidate>
-        <div>
-          <S.Label>Nome:</S.Label>
-          <S.Input
+      <Atoms.Box>
+        <Atoms.TitlePage> Dados do Usuário </Atoms.TitlePage>
+        <form noValidate>
+          <Atoms.InputComponent
             type="text"
+            label="Nome"
             {...register('name')}
+            error={errors.name}
+            style={{ marginBottom: '10px' }}
+            placeholder="Digite o Nome:"
             defaultValue={userData.name}
           />
-          <Atoms.ErrorMessage>{errors.name?.message}</Atoms.ErrorMessage>
-        </div>
-        <div>
-          <S.Label> Preço </S.Label>
-          <S.Input type="number" {...register('price')} />
-          <Atoms.ErrorMessage>{errors.price?.message}</Atoms.ErrorMessage>
-        </div>
 
-        <S.ContainerInput>
-          <input type="checkbox" {...register('offer')} />
-          <S.Label> Produto em oferta?</S.Label>
-        </S.ContainerInput>
-        <S.ButtonStyle type="submit"> Adicionar Produto </S.ButtonStyle>
-      </form>{' '}
+          <Atoms.InputComponent
+            type="email"
+            label="Email"
+            {...register('email')}
+            error={errors.email}
+            placeholder="Digite o Email:"
+            defaultValue={userData.email}
+          />
+          <Atoms.InputComponent
+            type="number"
+            label="Contato"
+            min={0}
+            {...register('contact')}
+            error={errors.contact}
+            placeholder="Digite o Contato:"
+            defaultValue={userData.contact}
+          />
+          <Atoms.InputComponent
+            type="text"
+            label="Endereço"
+            {...register('adress')}
+            error={errors.adress}
+            placeholder="Digite o Endereço:"
+            defaultValue={userData.address}
+          />
+          <Atoms.InputComponent
+            type="text"
+            label="Complemento"
+            {...register('complement')}
+            error={errors.complement}
+            placeholder="Digite o Complemento:"
+            defaultValue={userData.complement}
+          />
+          <S.ButtonStyle type="submit"> Editar Dados </S.ButtonStyle>
+        </form>{' '}
+      </Atoms.Box>
     </S.Container>
   )
 }

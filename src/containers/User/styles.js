@@ -2,13 +2,12 @@ import styled from 'styled-components'
 import { Button } from '../../components/Atoms/Button'
 
 export const Container = styled.div`
-  display: flex;
-  min-width: 100%;
-  height: 100vh;
-  justify-content: center;
-  align-items: center;
-
   form {
+    border-radius: 10px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 25;
   }
 `
 export const Label = styled.p`
