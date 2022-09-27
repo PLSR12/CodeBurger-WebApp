@@ -68,17 +68,14 @@ export function Login() {
         <img src={Logo} alt="logo-codeburger" />
         <h1>Login</h1>
         <form noValidate onSubmit={handleSubmit(onSubmit)}>
-          <Atoms.InputComponent
-            type="email"
-            label="Email"
-            name="email"
-            {...register('email')}
-            error={errors.email}
-          />
+          <S.Label> Email:</S.Label>
+          <S.Input type="email" name="email" {...register('email')} />
+          <Atoms.ErrorMessage> {errors.email?.message}</Atoms.ErrorMessage>
+
+          <S.Label> Senha:</S.Label>
 
           <div>
-            <Atoms.InputComponent
-              label="Senha"
+            <S.Input
               type={showPassword ? 'text' : 'password'}
               {...register('password')}
               error={errors.password}
