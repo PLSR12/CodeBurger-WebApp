@@ -2,16 +2,28 @@ import styled from 'styled-components'
 import { Button } from '../../../components/Atoms/Button'
 
 export const Container = styled.div`
-  display: flex;
-  min-width: 100%;
-  height: 100vh;
-  justify-content: center;
-  align-items: center;
+  .dropzone {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+    margin-top: 15px;
+    border-width: 2px;
+    border-radius: 2px;
+    border: 2px #8f8f8f dashed;
+    border-style: dashed;
+    background-color: #fafafa;
+    color: #bdbdbd;
+    outline: none;
+    transition: border 0.24s ease-in-out;
 
+    p {
+      font-size: 15px;
+      color: #000000;
+    }
+  }
   form {
-    background-color: #565656;
-    border-radius: 10px;
-    padding: 30px;
     display: flex;
     flex-direction: column;
     gap: 25px;
@@ -19,7 +31,7 @@ export const Container = styled.div`
 `
 export const Label = styled.p`
   font-size: 15px;
-  color: #fff;
+  color: #000;
   margin-bottom: 5px;
 `
 
@@ -41,7 +53,7 @@ export const ButtonStyle = styled(Button)`
 export const LabelUpload = styled.label`
   cursor: pointer;
   display: flex;
-  border: 1px #ffff dashed;
+  border: 1px #000 dashed;
   border-radius: 5px;
   padding: 15px;
   gap: 5px;

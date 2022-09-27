@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import React, { useState } from 'react'
+import Dropzone from 'react-dropzone'
 import { useForm } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -13,14 +13,14 @@ import * as Atoms from '../../../components/Atoms'
 import * as S from './styles'
 
 function NewCategorie() {
-  const [fileName, setFileName] = useState(null)
+  const [file, setFile] = useState([])
   const { push } = useHistory()
 
   const onSubmit = async (data) => {
     const brandDataFormData = new FormData()
 
     brandDataFormData.append('name', data.name)
-    brandDataFormData.append('file', data.file[0])
+    brandDataFormData.append('file', file[0])
 
     await toast.promise(api.post('categories', brandDataFormData), {
       success: 'Categoria criada com sucesso',
@@ -34,9 +34,6 @@ function NewCategorie() {
 
   const schema = Yup.object().shape({
     name: Yup.string().required('O nome é obrigatório'),
-    file: Yup.mixed().test('required', 'Carregue uma imagem', (value) => {
-      return value && value.length > 0
-    }),
   })
 
   const {
@@ -45,35 +42,49 @@ function NewCategorie() {
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) })
 
+  const handleDrop = (acceptedFiles) =>
+    setFile(acceptedFiles.map((file) => file))
+
   return (
     <S.Container>
-      <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <S.Label>Nome:</S.Label>
-          <S.Input type="text" {...register('name')} />
-          <Atoms.ErrorMessage>{errors.name?.message}</Atoms.ErrorMessage>
+      <Atoms.Box>
+        <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
           <div>
-            <S.LabelUpload>
-              {fileName || (
-                <>
-                  <CloudUploadIcon />
-                  Caregue a imagem do marca
-                </>
+            <Atoms.InputComponent
+              type="text"
+              label="Nome"
+              {...register('name')}
+              error={errors.name}
+              placeholder="Digite o Nome:"
+            />
+            <Dropzone onDrop={handleDrop}>
+              {({ getRootProps, getInputProps }) => (
+                <div {...getRootProps({ className: 'dropzone' })}>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    {...register('file')}
+                    {...getInputProps()}
+                  />
+                  {file.length > 0 ? (
+                    <p>
+                      {file.map((file) => (
+                        <li key={file}>{file?.name}</li>
+                      ))}
+                    </p>
+                  ) : (
+                    <p> Arraste sua imagem ou clique e selecione:</p>
+                  )}
+                </div>
               )}
-              <input
-                type="file"
-                {...register('file')}
-                onChange={(value) => {
-                  setFileName(value.target.files[0]?.name)
-                }}
-              />
-            </S.LabelUpload>
-            <Atoms.ErrorMessage>{errors.file?.message}</Atoms.ErrorMessage>
+            </Dropzone>
+            {Object.keys(file).length <= 0 && (
+              <Atoms.ErrorMessage> Carregue uma Imagem!</Atoms.ErrorMessage>
+            )}
+            <S.ButtonStyle type="submit"> Adicionar Categoria </S.ButtonStyle>
           </div>
-
-          <S.ButtonStyle type="submit"> Adicionar Categoria </S.ButtonStyle>
-        </div>
-      </form>
+        </form>
+      </Atoms.Box>
     </S.Container>
   )
 }
