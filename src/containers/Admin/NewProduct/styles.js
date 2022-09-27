@@ -26,7 +26,7 @@ export const ButtonStyle = styled(Button)`
   margin-top: 25px;
 `
 export const LabelUpload = styled.label`
-  margin-top: 35px;
+  margin-top: 10px;
   margin-bottom: 25px;
   cursor: pointer;
   display: flex;

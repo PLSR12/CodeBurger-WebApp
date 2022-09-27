@@ -97,6 +97,7 @@ function NewProduct() {
             error={errors.price}
             onInput={maskCurrencyInput}
             placeholder="Digite o Preço:"
+            defaultValue={'R$ 0,00'}
           />
           <div>
             <S.LabelUpload>
