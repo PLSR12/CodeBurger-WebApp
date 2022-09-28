@@ -33,7 +33,7 @@ function NewProduct() {
     })
 
     setTimeout(() => {
-      push('/listar-produtos')
+      push('/produtos/listar')
     }, 2000)
   }
 
