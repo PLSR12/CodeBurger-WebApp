@@ -17,12 +17,12 @@ function NewCategorie() {
   const { push } = useHistory()
 
   const onSubmit = async (data) => {
-    const brandDataFormData = new FormData()
+    const categoryDataFormData = new FormData()
 
-    brandDataFormData.append('name', data.name)
-    brandDataFormData.append('file', file[0])
+    categoryDataFormData.append('name', data.name)
+    categoryDataFormData.append('file', file[0])
 
-    await toast.promise(api.post('categories', brandDataFormData), {
+    await toast.promise(api.post('categories', categoryDataFormData), {
       success: 'Categoria criada com sucesso',
       error: 'Falha ao criar a categoria',
     })
