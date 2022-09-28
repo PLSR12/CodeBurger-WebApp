@@ -18,9 +18,9 @@ const listLinks = [
     icon: ShoppingCartIcon,
   },
   {
-    id: 4,
-    label: 'Nova Categoria',
-    link: paths.NewCategorie,
+    id: 3,
+    label: 'Categorias',
+    link: paths.Category,
     icon: BrandingWatermarkIcon,
   },
 ]
