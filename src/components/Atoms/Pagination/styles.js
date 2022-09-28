@@ -10,11 +10,11 @@ export const Container = styled.div`
   }
 
   .MuiPagination-root .MuiPagination-ul .Mui-selected {
-    background-color: #0671E0 !important;
+    background-color: #9758a6 !important;
     color: white;
 
     &:hover {
       opacity: 0.8;
     }
   }
-`;
+`
