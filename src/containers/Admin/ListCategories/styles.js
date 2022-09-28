@@ -90,13 +90,13 @@ export const BoxFastFilters = styled.div`
   button {
     padding: 6px 12px;
     border: none;
-    border: 1px solid #502314;
+    border: 1px solid #000;
     border-radius: 4px;
 
     font-weight: 500;
     font-size: 11.11px;
     line-height: 125%;
-    color: #502314;
+    color: #000;
     background: transparent;
     cursor: pointer;
   }
