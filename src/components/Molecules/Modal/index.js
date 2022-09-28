@@ -1,9 +1,8 @@
-import ReactModal from 'react-modal';
+import ReactModal from 'react-modal'
 
-import { Button, ButtonsArea, Text, Title } from './styles';
+import { Button, ButtonsArea, Text, Title } from './styles'
 
-
-function Modal({
+export function Modal({
   isOpen,
   onRequestClose,
   ariaHideApp,
@@ -16,6 +15,10 @@ function Modal({
 }) {
   return (
     <ReactModal
+      style={{
+        overlay: {},
+        content: { inset: '30%', minHeight: 'max-content', height: '250px' },
+      }}
       isOpen={isOpen}
       onRequestClose={onRequestClose}
       ariaHideApp={ariaHideApp}
@@ -31,7 +34,5 @@ function Modal({
         </Button>
       </ButtonsArea>
     </ReactModal>
-  );
+  )
 }
-
-export default Modal;
