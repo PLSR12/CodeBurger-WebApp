@@ -4,6 +4,7 @@ import React from 'react'
 import * as S from './styles'
 
 import EditProduct from './EditProduct'
+import ListCategories from './ListCategories'
 import ListProducts from './ListProducts'
 import NewCategorie from './NewCategorie'
 import NewProduct from './NewProduct'
@@ -22,6 +23,7 @@ export function Admin({ match: { path } }) {
         {path === paths.NewProduct && <NewProduct />}
         {path === paths.EditProduct && <EditProduct />}
         {path === paths.NewCategorie && <NewCategorie />}
+        {path === paths.Category && <ListCategories />}
       </S.ContainerItems>
     </S.Container>
   )
