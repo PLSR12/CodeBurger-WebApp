@@ -128,6 +128,7 @@ function ListProducts() {
     async function loadProducts() {
       const { data } = await api.get('products')
       setData(data)
+      setModalLoadingIsOpen(false)
     }
     loadProducts()
   }, [])
