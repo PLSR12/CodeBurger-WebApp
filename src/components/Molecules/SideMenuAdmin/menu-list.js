@@ -1,4 +1,3 @@
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
 import BrandingWatermarkIcon from '@mui/icons-material/BrandingWatermark'
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
@@ -14,15 +13,9 @@ const listLinks = [
   },
   {
     id: 2,
-    label: 'Listar Produtos',
+    label: 'Produtos',
     link: paths.Products,
     icon: ShoppingCartIcon,
-  },
-  {
-    id: 3,
-    label: 'Novo Produto',
-    link: paths.NewProduct,
-    icon: AddShoppingCartIcon,
   },
   {
     id: 4,
