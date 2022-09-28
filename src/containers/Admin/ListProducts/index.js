@@ -13,14 +13,16 @@ import {
   useSortBy,
   useTable,
 } from 'react-table'
-import ImgLoading from '../../../assets/img/loading.gif'
+import { toast } from 'react-toastify'
+import ImgLoading from '../../../assets/img/loading-novo.gif'
 import { Pagination } from '../../../components/Atoms/Pagination'
+import * as Molecules from '../../../components/Molecules'
 import GenericModal from '../../../components/Molecules/Modal/GenericModal'
 import { ModalContentLoading } from '../../../components/Molecules/Modal/styles'
 import api from '../../../services/api'
 import * as S from './styles'
-
 import { TableActions, TableFilter } from './TableTools'
+
 function ListProducts() {
   const [data, setData] = useState([])
   const [modalLoadingIsOpen, setModalLoadingIsOpen] = useState(true)
@@ -34,11 +36,38 @@ function ListProducts() {
     itemsPerPage: 10,
   })
 
-  const titleModalDelete = 'Excluir Set'
-  const textModalDelete = '\nDeseja realmente excluir esse Set?'
+  const titleModalDelete = 'Excluir Produto'
+  const textModalDelete = '\nDeseja realmente excluir esse Produto?'
 
   const columns = useMemo(
     () => [
+      {
+        Header: '',
+        accessor: 'url',
+        Cell: ({ row }) => {
+          const data = row.original
+          const imageProduct = data.url
+
+          return (
+            <div
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                display: 'flex',
+              }}
+            >
+              <img
+                src={imageProduct}
+                alt="imagem do produto"
+                style={{
+                  width: '40px',
+                  height: '40px',
+                }}
+              />
+            </div>
+          )
+        },
+      },
       {
         Header: 'Nome',
         accessor: 'name',
@@ -82,6 +111,9 @@ function ListProducts() {
           return (
             <TableActions>
               <MenuItem onClick={() => handleEdit(data)}>Editar</MenuItem>
+              <MenuItem onClick={() => handleModalConfirmDelete(data)}>
+                Excluir
+              </MenuItem>
             </TableActions>
           )
         },
@@ -93,12 +125,11 @@ function ListProducts() {
   )
 
   useEffect(() => {
-    async function loadOrders() {
+    async function loadProducts() {
       const { data } = await api.get('products')
       setData(data)
-      setModalLoadingIsOpen(false)
     }
-    loadOrders()
+    loadProducts()
   }, [])
 
   const handleEdit = (row) => {
@@ -119,6 +150,19 @@ function ListProducts() {
   function handleModalConfirmDelete(row) {
     setIdToAction(row.id)
     setModalConfirmDeleteIsOpen(true)
+  }
+
+  const handleModalConfirmDeleteYes = async () => {
+    await toast.promise(api.delete(`/products/${idToAction}`), {
+      success: 'Produto deletado com sucesso',
+      error: 'Falha ao deletar Produto',
+    })
+
+    setTimeout(() => {
+      setIdToAction('')
+      setModalConfirmDeleteIsOpen(false)
+      window.location.reload()
+    }, 2000)
   }
 
   function columnSorted(columnTypeSort) {
@@ -194,6 +238,17 @@ function ListProducts() {
           <img src={ImgLoading} alt="Loading" />
         </ModalContentLoading>
       </GenericModal>
+      <Molecules.Modal
+        isOpen={modalConfirmDeleteIsOpen}
+        onRequestClose={() => setModalConfirmDeleteIsOpen(false)}
+        ariaHideApp
+        title={titleModalDelete}
+        text={textModalDelete}
+        handleNo={() => setModalConfirmDeleteIsOpen(false)}
+        textNo="Não"
+        handleYes={handleModalConfirmDeleteYes}
+        textYes="Sim, excluir"
+      />
       <S.ContainerHeaderTable>
         <S.BoxHeader>
           <S.HeaderTitle>
