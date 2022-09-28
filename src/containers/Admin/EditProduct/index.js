@@ -2,7 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import * as Yup from 'yup'
 
@@ -16,14 +16,11 @@ import { maskCurrencyInput } from '../../../utils/maskCurrencyInput'
 import * as S from './styles'
 function EditProduct() {
   const [fileName, setFileName] = useState(null)
+  const [product, setProduct] = useState()
   const [categories, setCategories] = useState([])
   const [modalIsOpen, setModalIsOpen] = useState(true)
-  const {
-    push,
-    location: {
-      state: { product },
-    },
-  } = useHistory()
+  const { push } = useHistory()
+  const { id } = useParams()
 
   const onSubmit = async (data) => {
     const productDataFormData = new FormData()
@@ -42,7 +39,7 @@ function EditProduct() {
     )
 
     setTimeout(() => {
-      push('/listar-produtos')
+      push('/produtos/listar')
     }, 2000)
   }
 
@@ -71,6 +68,16 @@ function EditProduct() {
     reset,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) })
+
+  useEffect(() => {
+    async function loadProducts() {
+      const splitedId = id.split(':')[1]
+      const { data: OneProduct } = await api.get(`/products/${splitedId}`)
+
+      setProduct(OneProduct)
+    }
+    loadProducts()
+  }, [id])
 
   useEffect(() => {
     async function loadCategories() {
@@ -161,7 +168,7 @@ function EditProduct() {
             <input type="checkbox" {...register('offer')} />
             <S.Label> Produto em oferta?</S.Label>
           </S.ContainerInput>
-          <S.ButtonStyle type="submit"> Adicionar Produto </S.ButtonStyle>
+          <S.ButtonStyle type="submit"> Editar Produto </S.ButtonStyle>
         </form>
       </Atoms.Box>
     </S.Container>
