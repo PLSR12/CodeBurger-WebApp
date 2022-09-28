@@ -1,9 +1,9 @@
 const paths = {
-    Order: '/pedidos',
-    Products: '/listar-produtos',
-    EditProduct: '/editar-produto',
-    NewProduct: '/novo-produto',
-    NewCategorie: '/nova-categoria'
+  Order: '/pedidos',
+  Products: '/produtos/listar',
+  EditProduct: '/produtos/editar/:id',
+  NewProduct: '/produtos/criar',
+  NewCategorie: '/nova-categoria',
 }
 
-export  default paths
+export default paths
