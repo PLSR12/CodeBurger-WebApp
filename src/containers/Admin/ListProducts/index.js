@@ -1,91 +1,345 @@
-import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
-import paths from '../../../constants/paths'
-
-import Paper from '@mui/material/Paper'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
-import TableRow from '@mui/material/TableRow'
-
 import CancelIcon from '@mui/icons-material/Cancel'
 import CheckBoxIcon from '@mui/icons-material/CheckBox'
-
+import SearchIcon from '@mui/icons-material/Search'
+import { InputAdornment, TextField } from '@mui/material'
+import MenuItem from '@mui/material/MenuItem'
+import { useEffect, useMemo, useState } from 'react'
+import { MdArrowDropDown, MdArrowDropUp } from 'react-icons/md'
+import { useHistory } from 'react-router-dom'
+import {
+  useFilters,
+  usePagination,
+  useRowSelect,
+  useSortBy,
+  useTable,
+} from 'react-table'
 import ImgLoading from '../../../assets/img/loading.gif'
+import { Pagination } from '../../../components/Atoms/Pagination'
 import GenericModal from '../../../components/Molecules/Modal/GenericModal'
 import { ModalContentLoading } from '../../../components/Molecules/Modal/styles'
-
 import api from '../../../services/api'
-import formatCurrency from '../../../utils/formatCurrency'
 import * as S from './styles'
 
+import { TableActions, TableFilter } from './TableTools'
 function ListProducts() {
-  const [products, setProducts] = useState([])
-  const [modalIsOpen, setModalIsOpen] = useState(true)
+  const [data, setData] = useState([])
+  const [modalLoadingIsOpen, setModalLoadingIsOpen] = useState(true)
   const { push } = useHistory()
+  const [idToAction, setIdToAction] = useState()
+  const [modalConfirmDeleteIsOpen, setModalConfirmDeleteIsOpen] = useState(
+    false
+  )
+  const [filters, setFilters] = useState({})
+  const [pagination, setPagination] = useState({
+    itemsPerPage: 10,
+  })
+
+  const titleModalDelete = 'Excluir Set'
+  const textModalDelete = '\nDeseja realmente excluir esse Set?'
+
+  const columns = useMemo(
+    () => [
+      {
+        Header: 'Nome',
+        accessor: 'name',
+      },
+
+      {
+        Header: 'Preço',
+        accessor: 'price',
+        Cell: ({ row }) => {
+          const data = row.original
+          return (
+            <>
+              <p>{maskCurrency(data.price)}</p>
+            </>
+          )
+        },
+      },
+
+      {
+        Header: 'Oferta',
+        accessor: 'offer',
+        Cell: ({ row }) => {
+          const dataOffer = row.original
+          return (
+            <>
+              {dataOffer.offer ? (
+                <CheckBoxIcon style={{ color: '#228822' }} />
+              ) : (
+                <CancelIcon style={{ color: '#CC1717' }} />
+              )}
+            </>
+          )
+        },
+      },
+      {
+        Header: 'Ações',
+        accessor: 'options',
+        Cell: ({ row }) => {
+          const data = row.original
+
+          return (
+            <TableActions>
+              <MenuItem onClick={() => handleEdit(data)}>Editar</MenuItem>
+            </TableActions>
+          )
+        },
+        disableSortBy: true,
+        width: 30,
+      },
+    ],
+    []
+  )
 
   useEffect(() => {
     async function loadOrders() {
       const { data } = await api.get('products')
-      setProducts(data)
-      setModalIsOpen(false)
+      setData(data)
+      setModalLoadingIsOpen(false)
     }
     loadOrders()
   }, [])
 
-  function isOffer(offerStatus) {
-    if (offerStatus) {
-      return <CheckBoxIcon style={{ color: '#228822' }} />
-    } else {
-      return <CancelIcon style={{ color: '#CC1717' }} />
-    }
+  const handleEdit = (row) => {
+    push(`/produtos/editar/:${row.id}`)
   }
 
-  function editProduct(product) {
-    push(paths.EditProduct, { product })
+  function maskCurrency(value, locale = 'pt-BR', currency = 'BRL') {
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency,
+    }).format(value)
   }
+
+  function handleNewProduct() {
+    push('/produtos/criar')
+  }
+
+  function handleModalConfirmDelete(row) {
+    setIdToAction(row.id)
+    setModalConfirmDeleteIsOpen(true)
+  }
+
+  function columnSorted(columnTypeSort) {
+    if (columnTypeSort.isSorted && columnTypeSort.isSortedDesc) {
+      return <MdArrowDropDown size={18} />
+    }
+
+    if (columnTypeSort.isSorted) {
+      return <MdArrowDropUp size={18} />
+    }
+
+    return null
+  }
+
+  const tableInstance = useTable(
+    {
+      columns,
+      data,
+      initialState: {
+        pageSize: pagination.itemsPerPage,
+      },
+    },
+    useFilters,
+    useSortBy,
+    usePagination,
+    useRowSelect,
+    (hooks) => {
+      hooks.visibleColumns.push((columns) => [
+        {
+          id: 'selection',
+          Header: ({ getToggleAllPageRowsSelectedProps }) => (
+            <div>
+              <S.InputCheckbox
+                {...getToggleAllPageRowsSelectedProps()}
+                title="Marcar/desmarcar todos os itens da página atual"
+              />
+            </div>
+          ),
+          Cell: ({ row }) => (
+            <div>
+              <S.InputCheckbox
+                {...row.getToggleRowSelectedProps()}
+                title="Marcar/desmarcar este item"
+              />
+            </div>
+          ),
+          maxWidth: 60,
+          width: 60,
+        },
+        ...columns,
+      ])
+    }
+  )
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    prepareRow,
+    page,
+    setPageSize,
+    gotoPage,
+    pageOptions,
+    state: { pageIndex },
+    setFilter,
+  } = tableInstance
 
   return (
-    <S.Container>
-      <GenericModal isOpen={modalIsOpen}>
+    <>
+      <GenericModal isOpen={modalLoadingIsOpen}>
         <ModalContentLoading>
           <h2>Carregando...</h2>
           <img src={ImgLoading} alt="Loading" />
         </ModalContentLoading>
       </GenericModal>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 100 }} size="small" aria-label="a dense table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Nomes</TableCell>
-              <TableCell>Preço</TableCell>
-              <TableCell align="center">Produto em oferta</TableCell>
-              <TableCell>Editar</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {products &&
-              products.map((product) => (
-                <TableRow
-                  key={product.id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    {product.name}
-                  </TableCell>
-                  <TableCell>{formatCurrency(product.price)}</TableCell>
-                  <TableCell align="center">{isOffer(product.offer)}</TableCell>
-                  <TableCell>
-                    <S.EditIconStyles onClick={() => editProduct(product)} />
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-      </TableContainer>{' '}
-    </S.Container>
+      <S.ContainerHeaderTable>
+        <S.BoxHeader>
+          <S.HeaderTitle>
+            <h1>Produtos</h1>
+            <h2>Listagem de produtos</h2>
+          </S.HeaderTitle>
+
+          <S.BoxRightBar>
+            <S.BoxSearchBar>
+              <div className="text-field-container">
+                <TextField
+                  variant="outlined"
+                  placeholder="Buscar por Nome"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                  onChange={(e) => {
+                    if (e.target.value.length >= 3) {
+                      setFilter('name', e.target.value)
+                    } else {
+                      setFilter('name', '')
+                    }
+                  }}
+                />
+              </div>
+            </S.BoxSearchBar>
+            <S.ButtonCreate onClick={() => handleNewProduct()}>
+              <p>Adicionar novo Produto</p>
+            </S.ButtonCreate>
+          </S.BoxRightBar>
+        </S.BoxHeader>
+      </S.ContainerHeaderTable>
+
+      <S.ContainerSearchTable>
+        <S.BoxFastFilters>
+          <p>Filtros Rápidos</p>
+          <TableFilter label="Recentes">
+            <MenuItem
+              onClick={(e) => console.log(e)}
+              selected={filters?.recents === 1}
+            >
+              Hoje
+            </MenuItem>
+            <MenuItem
+              onClick={(e) => console.log(e)}
+              selected={filters?.recents === 3}
+            >
+              Ultimos 3 dias
+            </MenuItem>
+            <MenuItem
+              onClick={(e) => console.log(e)}
+              selected={filters?.recents === 7}
+            >
+              Ultimos 7 dias
+            </MenuItem>
+            <MenuItem
+              onClick={(e) => console.log(e)}
+              selected={filters?.recents === 15}
+            >
+              Ultimos 15 dias
+            </MenuItem>
+            <MenuItem
+              onClick={(e) => console.log(e)}
+              selected={filters?.recents === 30}
+            >
+              Ultimos 30 dias
+            </MenuItem>
+          </TableFilter>
+        </S.BoxFastFilters>
+      </S.ContainerSearchTable>
+
+      <S.ContainerTable>
+        <table {...getTableProps()}>
+          <thead>
+            {headerGroups.map((headerGroup, index) => (
+              <tr key={index} {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column, index) => (
+                  <th
+                    key={index}
+                    {...column.getHeaderProps(column.getSortByToggleProps())}
+                    title="Ordenar por"
+                    {...column.getHeaderProps({
+                      style: { maxWidth: column.maxWidth, width: column.width },
+                    })}
+                  >
+                    {column.render('Header')}
+                    <span className="iconSortBy">
+                      {!column.isSorted && <MdArrowDropUp size={18} />}
+                    </span>
+                    <span>{columnSorted(column)}</span>
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {page.map((row, index) => {
+              prepareRow(row)
+              return (
+                <tr key={index} {...row.getRowProps()}>
+                  {row.cells.map((cell, index) => {
+                    return (
+                      <td key={index} {...cell.getCellProps()}>
+                        {cell.render('Cell')}
+                      </td>
+                    )
+                  })}
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </S.ContainerTable>
+
+      <S.ContainerFooter>
+        <div>
+          <p>Total de {data.length} Produtos encontrados. </p>
+        </div>
+        <div>
+          <p>Exibir</p>
+          <div>
+            <select
+              aria-label="Default select"
+              value={pagination.itemsPerPage}
+              onChange={(event) => {
+                setPagination({
+                  ...pagination,
+                  itemsPerPage: Number(event.target.value),
+                })
+                setPageSize(Number(event.target.value))
+              }}
+            >
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
+            </select>
+          </div>
+          <p>Produtos por página</p>
+        </div>
+        <Pagination gotoPage={gotoPage} pageOptions={pageOptions} />
+      </S.ContainerFooter>
+    </>
   )
 }
 
