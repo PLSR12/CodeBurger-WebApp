@@ -95,6 +95,15 @@ export function Products({ location: { state } }) {
               <Organisms.CardProducts key={product.id} product={product} />
             ))}
         </S.ProductsContainer>
+        <p className="count-products">
+          {filteredProducts
+            ? `${
+                filteredProducts.length > 1
+                  ? `${filteredProducts.length} Produtos encontrados`
+                  : `${filteredProducts.length} Produto encontrado`
+              }`
+            : ''}
+        </p>
       </S.Container>
     </>
   )

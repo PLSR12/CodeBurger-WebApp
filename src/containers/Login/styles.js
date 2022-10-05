@@ -90,6 +90,7 @@ export const Input = styled.input`
   box-shadow: 3px 3px 10px rgba(74, 144, 226, 0.19);
   border-radius: 5px;
   outline: none;
+  padding-left: 10px;
   border: ${(props) => (props.error ? '2px solid #cc1717' : 'none')};
 `
 

@@ -17,12 +17,12 @@ export const ContainerItens = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding:30px;
+  padding: 30px;
   img {
     width: 47vh;
     height: 17vh;
   }
-  h1{
+  h1 {
     font-style: normal;
     font-weight: 500;
     font-size: 30px;
@@ -37,41 +37,41 @@ export const ContainerItens = styled.div`
     justify-content: space-around;
 
     div {
-    display: flex;
-    justify-content: center;
-    display: flex;
-    align-items: center;
+      display: flex;
+      justify-content: center;
+      display: flex;
+      align-items: center;
 
-    position: relative;
-    flex: 1 1 0%;
+      position: relative;
+      flex: 1 1 0%;
 
-    svg {
-      position: absolute;
-      left: 12px;
-      top: 10px;
-    }
+      svg {
+        position: absolute;
+        left: 12px;
+        top: 10px;
+      }
 
-    span {
-      position: absolute;
-      right: 0;
-      cursor: pointer;
-
-      .iconVisiblity {
-        position: relative;
+      span {
+        position: absolute;
         right: 0;
-        top: 18px;
-        bottom: 0;
-        left: 0;
-        transform: translateX(-12px) translateY(-16px);
-        transition: all 0.5s ease;
+        cursor: pointer;
 
-        :hover {
-          fill: #000;
+        .iconVisiblity {
+          position: relative;
+          right: 0;
+          top: 18px;
+          bottom: 0;
+          left: 0;
+          transform: translateX(-12px) translateY(-16px);
+          transition: all 0.5s ease;
+
+          :hover {
+            fill: #000;
+          }
         }
       }
     }
   }
-}
 `
 
 export const Label = styled.p`
@@ -93,7 +93,8 @@ export const Input = styled.input`
   box-shadow: 3px 3px 10px rgba(74, 144, 226, 0.19);
   border-radius: 5px;
   outline: none;
-  border: ${props => (props.error ? '2px solid #cc1717' : 'none')};
+  padding-left: 10px;
+  border: ${(props) => (props.error ? '2px solid #cc1717' : 'none')};
 `
 
 export const LoginLink = styled.p`

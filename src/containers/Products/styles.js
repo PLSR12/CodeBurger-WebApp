@@ -9,6 +9,12 @@ export const Container = styled.div`
   flex-direction: column;
   flex-wrap: wrap;
   align-items: stretch;
+
+  .count-products {
+    font-size: 17px;
+    padding-bottom: 15px;
+    padding-left: 15px;
+  }
 `
 
 export const HomeImg = styled.img`
@@ -28,8 +34,8 @@ export const CategoryButton = styled.button`
   cursor: pointer;
   background: none;
   border: none;
-  border-bottom: ${props => props.isActiveCategory && '2px solid #9758a6'};
-  color: ${props => (props.isActiveCategory ? '#9758a6' : '#9a9a9a')};
+  border-bottom: ${(props) => props.isActiveCategory && '2px solid #9758a6'};
+  color: ${(props) => (props.isActiveCategory ? '#9758a6' : '#9a9a9a')};
   font-size: 1rem;
   line-height: 22px;
   padding-bottom: 5px;
@@ -37,8 +43,13 @@ export const CategoryButton = styled.button`
 export const ProductsContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  justify-content:center;
+  justify-content: center;
   align-items: center;
   gap: 3vw;
   padding: 4vw;
+
+  .nothing-notice {
+    font-size: 20px;
+    font-weight: bold;
+  }
 `

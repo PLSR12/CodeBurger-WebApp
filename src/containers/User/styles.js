@@ -7,7 +7,8 @@ export const Container = styled.div`
     padding: 30px;
     display: flex;
     flex-direction: column;
-    gap: 25;
+    gap: 25px;
+    margin-top: 25px;
   }
 `
 export const Label = styled.p`
@@ -56,4 +57,8 @@ export const ContainerInput = styled.div`
     height: 15px;
     cursor: pointer;
   }
+`
+export const BoxArea = styled.div`
+  margin-bottom: 15px;
+  margin-top: 25px;
 `

@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as Yup from 'yup'
+import maskContactInput from '../../utils/formatContact'
 
 import api from '../../services/api'
 
@@ -25,7 +26,11 @@ export function Register() {
     complement: Yup.string().required(
       'O complemento do endereço é obrigatório'
     ),
-    contact: Yup.number().required('O seu contato é obrigatório'),
+    contact: Yup.string()
+      .required('O seu contato é obrigatório')
+      .test('len', 'O Contato deve ter no minímo 9 números ', (val) => {
+        return val?.length === 14
+      }),
     email: Yup.string()
       .email('Digite um email válido')
       .required('O email é obrigatório'),
@@ -107,9 +112,9 @@ export function Register() {
           <Atoms.ErrorMessage> {errors.complement?.message}</Atoms.ErrorMessage>
           <S.Label error={errors.contact?.message}> Contato</S.Label>
           <S.Input
-            type="number"
             {...register('contact')}
             error={errors.contact?.message}
+            onInput={maskContactInput}
           />
           <Atoms.ErrorMessage> {errors.contact?.message}</Atoms.ErrorMessage>
           <S.Label error={errors.email?.message}> Email</S.Label>
