@@ -1,7 +1,8 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import React, { useEffect, useState } from 'react'
+import Dropzone from 'react-dropzone'
 import { useForm } from 'react-hook-form'
+
 import { useHistory, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import * as Yup from 'yup'
@@ -15,11 +16,12 @@ import { ModalContentLoading } from '../../../components/Molecules/Modal/styles'
 import { maskCurrencyInput } from '../../../utils/maskCurrencyInput'
 import * as S from './styles'
 function EditProduct() {
-  const [fileName, setFileName] = useState(null)
-  const [product, setProduct] = useState()
+  const [file, setFile] = useState([])
+  const [product, setProduct] = useState([])
   const [categories, setCategories] = useState([])
   const [modalIsOpen, setModalIsOpen] = useState(true)
   const { push } = useHistory()
+
   const { id } = useParams()
 
   const onSubmit = async (data) => {
@@ -29,6 +31,7 @@ function EditProduct() {
     productDataFormData.append('price', customParseFloat(data.price))
     productDataFormData.append('category', data.category)
     productDataFormData.append('offer', data.offer)
+    productDataFormData.append('file', file[0])
 
     await toast.promise(
       api.put(`products/${product.id}`, productDataFormData),
@@ -46,6 +49,9 @@ function EditProduct() {
   const customParseFloat = (value) => {
     return parseFloat(value.replace(/\D/g, '')) / 100
   }
+
+  const handleDrop = (acceptedFiles) =>
+    setFile(acceptedFiles.map((file) => file))
 
   function maskCurrency(valor, locale = 'pt-BR', currency = 'BRL') {
     return new Intl.NumberFormat(locale, {
@@ -75,6 +81,7 @@ function EditProduct() {
       const { data: OneProduct } = await api.get(`/products/${splitedId}`)
 
       setProduct(OneProduct)
+      setFile([{ name: OneProduct?.path }])
     }
     loadProducts()
   }, [id])
@@ -101,11 +108,11 @@ function EditProduct() {
   useEffect(() => {
     reset(product)
     setValue('price', maskCurrency(product?.price))
-
     setValue('file', product?.url)
     setValue('category', product?.category_id)
-    setFileName(product?.path)
   }, [product, categories])
+
+  console.log(file)
 
   return (
     <S.Container>
@@ -135,27 +142,45 @@ function EditProduct() {
             onInput={maskCurrencyInput}
             placeholder="Digite o Preço:"
           />
-          <div>
-            <S.LabelUpload>
-              {fileName || (
-                <>
-                  <CloudUploadIcon />
-                  Caregue a imagem do produto
-                </>
-              )}
+          <S.BoxAreaImage>
+            {product && (
+              <div className="image-container">
+                <img
+                  style={{
+                    width: '100%',
+                  }}
+                  src={product.url}
+                  alt="imagem do produto"
+                />
+              </div>
+            )}
 
-              <input
-                type="file"
-                accept="image/png , image/jpeg"
-                {...register('file')}
-                onChange={(value) => {
-                  setFileName(value.target.files[0]?.name)
-                }}
-              />
-            </S.LabelUpload>
-            <Atoms.ErrorMessage>{errors.file?.message}</Atoms.ErrorMessage>
-          </div>
-          <div>
+            <Dropzone onDrop={handleDrop}>
+              {({ getRootProps, getInputProps }) => (
+                <div {...getRootProps({ className: 'dropzone' })}>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    {...register('file')}
+                    {...getInputProps()}
+                  />
+                  {file.length > 0 ? (
+                    <p>
+                      {file.map((file) => (
+                        <li key={file}>{file?.name}</li>
+                      ))}
+                    </p>
+                  ) : (
+                    <p> Arraste sua imagem ou clique e selecione:</p>
+                  )}
+                </div>
+              )}
+            </Dropzone>
+            {Object.keys(file).length <= 0 && (
+              <Atoms.ErrorMessage> Carregue uma Imagem!</Atoms.ErrorMessage>
+            )}
+          </S.BoxAreaImage>
+          <div style={{ marginTop: '20px' }}>
             <Atoms.SelectComponent
               label={'Selecione uma Categoria'}
               options={categories}
@@ -163,7 +188,6 @@ function EditProduct() {
               error={errors.category}
             />
           </div>
-
           <S.ContainerInput>
             <input type="checkbox" {...register('offer')} />
             <S.Label> Produto em oferta?</S.Label>

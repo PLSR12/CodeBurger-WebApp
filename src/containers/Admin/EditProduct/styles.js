@@ -10,6 +10,39 @@ export const Container = styled.div`
     gap: 25;
   }
 `
+
+export const BoxAreaImage = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 35px;
+  margin-bottom: 35px;
+  flex-direction: row;
+
+  .image-container {
+    width: 300px;
+  }
+
+  .dropzone {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    border-width: 2px;
+    border-radius: 2px;
+    border: 2px #8f8f8f dashed;
+    border-style: dashed;
+    background-color: #fafafa;
+    color: #bdbdbd;
+    outline: none;
+    transition: border 0.24s ease-in-out;
+
+    p {
+      font-size: 15px;
+      color: #000000;
+    }
+  }
+`
 export const Label = styled.p`
   font-size: 15px;
   color: #000;

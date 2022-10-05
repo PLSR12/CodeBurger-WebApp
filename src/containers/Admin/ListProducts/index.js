@@ -72,7 +72,10 @@ function ListProducts() {
         Header: 'Nome',
         accessor: 'name',
       },
-
+      {
+        Header: 'Categoria',
+        accessor: 'category.name',
+      },
       {
         Header: 'Preço',
         accessor: 'price',

@@ -13,103 +13,103 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { toast } from 'react-toastify'
 
-import api from '../../../services/api'
 import { useUser } from '../../../hooks/UserContext'
+import api from '../../../services/api'
+import formatCurrency from '../../../utils/formatCurrency'
 import status from './order-status'
 
 import { ReactSelectStyle } from './styles'
 
-function Row ({ row, setOrders, orders }) {
+function Row({ row, setOrders, orders }) {
   const [open, setOpen] = React.useState(false)
-  const { logout,userData } = useUser()
+  const { logout, userData } = useUser()
   const [isLoading, setIsLoading] = React.useState(false)
 
-  async function setNewStatus (id, status) {
+  async function setNewStatus(id, status) {
     setIsLoading(true)
     try {
-    await api.put(`orders/${id}`, { status })
-    toast.success('Atualizado com sucesso!')
+      await api.put(`orders/${id}`, { status })
+      toast.success('Atualizado com sucesso!')
 
-    const newOrders = orders.map(order => {
-      return order._id === id ? {...order, status } : order
-    })
-    setOrders(newOrders)
-    } catch(err){
+      const newOrders = orders.map((order) => {
+        return order._id === id ? { ...order, status } : order
+      })
+      setOrders(newOrders)
+    } catch (err) {
       toast.error('Tente atualizar de novo!')
+    } finally {
+      setIsLoading(false)
     }
-      finally {
-    setIsLoading(false)  
   }
-}
 
   return (
     <React.Fragment>
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
         <TableCell>
           <IconButton
-            aria-label='expand row'
-            size='small'
+            aria-label="expand row"
+            size="small"
             onClick={() => setOpen(!open)}
           >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell component='th' scope='row'>
+        <TableCell component="th" scope="row">
           {row.orderId}
         </TableCell>
         <TableCell>{row.name}</TableCell>
         <TableCell>{row.date}</TableCell>
         <TableCell>
           <ReactSelectStyle
-            options={status.filter(sts => sts.value !== 'Todos')}
+            options={status.filter((sts) => sts.value !== 'Todos')}
             menuPortalTarget={document.body}
-            placeholder='Status'
+            placeholder="Status"
             defaultValue={
-              status.find(option => option.value === row.status) || null
-          }
-          onChange={newStatus => {
-            setNewStatus(row.orderId, newStatus.value);
-          }}
-          isLoading={isLoading}
+              status.find((option) => option.value === row.status) || null
+            }
+            onChange={(newStatus) => {
+              setNewStatus(row.orderId, newStatus.value)
+            }}
+            isLoading={isLoading}
           />
         </TableCell>
         <TableCell></TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout='auto' unmountOnExit>
+          <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
-              <Typography variant='h6' gutterBottom component='div'>
+              <Typography variant="h6" gutterBottom component="div">
                 Pedido
               </Typography>
-              <Table size='small' aria-label='purchases'>
+              <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
                     <TableCell>Quantidade</TableCell>
                     <TableCell>Produto</TableCell>
                     <TableCell>Categoria</TableCell>
-                    <TableCell></TableCell>
+                    <TableCell>Preço</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {row.products.map(productRow => (
+                  {row.products.map((productRow) => (
                     <TableRow key={productRow.id}>
-                      <TableCell component='th' scope='row'>
+                      <TableCell component="th" scope="row">
                         {productRow.quantity}
                       </TableCell>
                       <TableCell>{productRow.name}</TableCell>
                       <TableCell>{productRow.category}</TableCell>
-                      <TableCell></TableCell>
+                      <TableCell>{formatCurrency(productRow.price)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </Box>
             <Box sx={{ margin: 1 }}>
-              <Typography variant='h6' gutterBottom component='div'>
+              <Typography variant="h6" gutterBottom component="div">
                 Dados do Cliente
               </Typography>
-              <Table size='small' aria-label='purchases'>
+              <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
                     <TableCell>Nome</TableCell>
@@ -120,17 +120,17 @@ function Row ({ row, setOrders, orders }) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                    <TableRow >
-                       <TableCell component='th' scope='row'>
+                  <TableRow>
+                    <TableCell component="th" scope="row">
                       {userData.name}
-                      </TableCell>
-                      <TableCell component='th' scope='row'>
+                    </TableCell>
+                    <TableCell component="th" scope="row">
                       {userData.address}
-                      </TableCell>
-                      <TableCell>{userData.complement}</TableCell>
-                      <TableCell>{userData.contact}</TableCell>
-                      <TableCell></TableCell>
-                    </TableRow>
+                    </TableCell>
+                    <TableCell>{userData.complement}</TableCell>
+                    <TableCell>{userData.contact}</TableCell>
+                    <TableCell></TableCell>
+                  </TableRow>
                 </TableBody>
               </Table>
             </Box>
@@ -154,10 +154,10 @@ Row.propTypes = {
         quantity: PropTypes.number.isRequired,
         name: PropTypes.string.isRequired,
         category: PropTypes.string.isRequired,
-        url: PropTypes.string.isRequired
+        url: PropTypes.string.isRequired,
       })
-    ).isRequired
-  }).isRequired
+    ).isRequired,
+  }).isRequired,
 }
 
 export default Row

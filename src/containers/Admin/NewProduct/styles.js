@@ -8,6 +8,27 @@ export const Container = styled.div`
     display: flex;
     flex-direction: column;
     gap: 25;
+    .dropzone {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+      margin-top: 15px;
+      border-width: 2px;
+      border-radius: 2px;
+      border: 2px #8f8f8f dashed;
+      border-style: dashed;
+      background-color: #fafafa;
+      color: #bdbdbd;
+      outline: none;
+      transition: border 0.24s ease-in-out;
+
+      p {
+        font-size: 15px;
+        color: #000000;
+      }
+    }
   }
 `
 export const Label = styled.p`
