@@ -33,6 +33,14 @@ export function Header() {
         >
           Produtos
         </S.PageLink>
+        {userData.admin === true && (
+          <S.PageLink
+            onClick={() => push('/pedidos')}
+            isActive={pathname.includes('pedidos')}
+          >
+            Admin
+          </S.PageLink>
+        )}
       </S.ContainerLeft>
       <S.ContainerRight>
         <S.PageLink onClick={() => push('/carrinho')}>
