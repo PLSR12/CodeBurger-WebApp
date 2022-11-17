@@ -5,15 +5,14 @@ import { useForm } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import * as Yup from 'yup'
-
 import api from '../../../services/api'
-
+import * as Molecules from '../../../components/Molecules'
 import * as Atoms from '../../../components/Atoms'
-
 import * as S from './styles'
 
 function NewCategorie() {
   const [file, setFile] = useState([])
+  const [modalLoadingIsOpen, setModalLoadingIsOpen] = useState(false)
   const { push } = useHistory()
 
   const onSubmit = async (data) => {
@@ -22,14 +21,21 @@ function NewCategorie() {
     categoryDataFormData.append('name', data.name)
     categoryDataFormData.append('file', file[0])
 
-    await toast.promise(api.post('categories', categoryDataFormData), {
-      success: 'Categoria criada com sucesso',
-      error: 'Falha ao criar a categoria',
-    })
-
-    setTimeout(() => {
-      push('/pedidos')
-    }, 2000)
+    setModalLoadingIsOpen(true)
+    await toast
+      .promise(api.post('categories', categoryDataFormData), {
+        success: 'Categoria criada com sucesso',
+        error: 'Falha ao criar a categoria',
+      })
+      .then(() => {
+        setModalLoadingIsOpen(false)
+        setTimeout(() => {
+          push('/categoria/listar')
+        }, 2000)
+      })
+      .catch(() => {
+        setModalLoadingIsOpen(false)
+      })
   }
 
   const schema = Yup.object().shape({
@@ -48,6 +54,7 @@ function NewCategorie() {
   return (
     <S.Container>
       <Atoms.Box>
+        <Molecules.LoadingModal loading={modalLoadingIsOpen} />
         <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
           <div>
             <Atoms.InputComponent
@@ -81,7 +88,7 @@ function NewCategorie() {
             {Object.keys(file).length <= 0 && (
               <Atoms.ErrorMessage> Carregue uma Imagem!</Atoms.ErrorMessage>
             )}
-            <S.ButtonStyle type="submit"> Adicionar Categoria </S.ButtonStyle>
+            <S.ButtonStyle type="submit"> Cadastrar Categoria </S.ButtonStyle>
           </div>
         </form>
       </Atoms.Box>

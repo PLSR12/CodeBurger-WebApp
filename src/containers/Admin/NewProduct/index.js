@@ -5,17 +5,17 @@ import { useForm } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import * as Yup from 'yup'
-
 import api from '../../../services/api'
-
+import * as Molecules from '../../../components/Molecules'
 import * as Atoms from '../../../components/Atoms'
 import { maskCurrencyInput } from '../../../utils/maskCurrencyInput'
-
+import { formatDataSelect } from '../../../utils/formatDataSelect'
 import * as S from './styles'
 
 function NewProduct() {
   const [file, setFile] = useState([])
   const [categories, setCategories] = useState([])
+  const [modalLoadingIsOpen, setModalLoadingIsOpen] = useState(true)
   const { push } = useHistory()
 
   const onSubmit = async (data) => {
@@ -27,14 +27,21 @@ function NewProduct() {
     productDataFormData.append('offer', data.offer)
     productDataFormData.append('file', file[0])
 
-    await toast.promise(api.post('products', productDataFormData), {
-      success: 'Produto criado com sucesso',
-      error: 'Falha ao criar o produto',
-    })
-
-    setTimeout(() => {
-      push('/produtos/listar')
-    }, 2000)
+    setModalLoadingIsOpen(true)
+    await toast
+      .promise(api.post('products', productDataFormData), {
+        success: 'Produto criado com sucesso',
+        error: 'Falha ao criar o produto',
+      })
+      .then(() => {
+        setModalLoadingIsOpen(false)
+        setTimeout(() => {
+          push('/produtos/listar')
+        }, 2000)
+      })
+      .catch(() => {
+        setModalLoadingIsOpen(false)
+      })
   }
 
   const customParseFloat = (value) => {
@@ -54,30 +61,23 @@ function NewProduct() {
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) })
 
-  useEffect(() => {
-    async function loadCategories() {
-      const { data } = await api.get('categories')
-
-      data.map((category) => {
-        const categroyId = category.id
-        const categoryLabel = category.name
-
-        const categoryOption = {
-          id: `${categroyId}`,
-          label: `${categoryLabel}`,
-        }
-
-        setCategories((prevState) => [...prevState, categoryOption])
-      })
-    }
-    loadCategories()
-  }, [])
+  async function loadCategories() {
+    const { data } = await api.get('categories')
+    setCategories(data)
+    setModalLoadingIsOpen(false)
+  }
 
   const handleDrop = (acceptedFiles) =>
     setFile(acceptedFiles.map((file) => file))
 
+  useEffect(() => {
+    loadCategories()
+  }, [])
+
   return (
     <S.Container>
+      <Molecules.LoadingModal loading={modalLoadingIsOpen} />
+
       <Atoms.Box>
         <form noValidate onSubmit={handleSubmit(onSubmit)}>
           <Atoms.InputComponent
@@ -126,7 +126,7 @@ function NewProduct() {
           <div style={{ marginTop: '20px' }}>
             <Atoms.SelectComponent
               label={'Selecione uma Categoria'}
-              options={categories}
+              options={formatDataSelect(categories)}
               {...register('category')}
               error={errors.category}
             />
@@ -136,7 +136,7 @@ function NewProduct() {
             <input type="checkbox" {...register('offer')} />
             <S.Label> Produto em oferta?</S.Label>
           </S.ContainerInput>
-          <S.ButtonStyle type="submit"> Adicionar Produto </S.ButtonStyle>
+          <S.ButtonStyle type="submit"> Cadastrar Produto </S.ButtonStyle>
         </form>
       </Atoms.Box>
     </S.Container>

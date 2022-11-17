@@ -2,26 +2,22 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import React, { useEffect, useState } from 'react'
 import Dropzone from 'react-dropzone'
 import { useForm } from 'react-hook-form'
-
 import { useHistory, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import * as Yup from 'yup'
-
 import api from '../../../services/api'
-
-import ImgLoading from '../../../assets/img/loading.gif'
 import * as Atoms from '../../../components/Atoms'
-import GenericModal from '../../../components/Molecules/Modal/GenericModal'
-import { ModalContentLoading } from '../../../components/Molecules/Modal/styles'
+import * as Molecules from '../../../components/Molecules'
 import { maskCurrencyInput } from '../../../utils/maskCurrencyInput'
+import { formatDataSelect } from '../../../utils/formatDataSelect'
 import * as S from './styles'
+
 function EditProduct() {
   const [file, setFile] = useState([])
   const [product, setProduct] = useState([])
   const [categories, setCategories] = useState([])
-  const [modalIsOpen, setModalIsOpen] = useState(true)
+  const [modalLoadingIsOpen, setModalLoadingIsOpen] = useState(true)
   const { push } = useHistory()
-
   const { id } = useParams()
 
   const onSubmit = async (data) => {
@@ -33,17 +29,21 @@ function EditProduct() {
     productDataFormData.append('offer', data.offer)
     productDataFormData.append('file', file[0])
 
-    await toast.promise(
-      api.put(`products/${product.id}`, productDataFormData),
-      {
+    setModalLoadingIsOpen(true)
+    await toast
+      .promise(api.put(`products/${product.id}`, productDataFormData), {
         success: 'Produto editado com sucesso',
         error: 'Falha ao editar o produto',
-      }
-    )
-
-    setTimeout(() => {
-      push('/produtos/listar')
-    }, 2000)
+      })
+      .then(() => {
+        setModalLoadingIsOpen(false)
+        setTimeout(() => {
+          push('/produtos/listar')
+        }, 2000)
+      })
+      .catch(() => {
+        setModalLoadingIsOpen(false)
+      })
   }
 
   const customParseFloat = (value) => {
@@ -75,36 +75,24 @@ function EditProduct() {
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) })
 
-  useEffect(() => {
-    async function loadProducts() {
-      const splitedId = id.split(':')[1]
-      const { data: OneProduct } = await api.get(`/products/${splitedId}`)
+  async function loadProducts() {
+    const splitedId = id.split(':')[1]
+    const { data: OneProduct } = await api.get(`/products/${splitedId}`)
 
-      setProduct(OneProduct)
-      setFile([{ name: OneProduct?.path }])
-    }
+    setProduct(OneProduct)
+    setFile([{ name: OneProduct?.path }])
+  }
+
+  async function loadCategories() {
+    const { data } = await api.get('categories')
+    setCategories(data)
+    setModalLoadingIsOpen(false)
+  }
+  useEffect(() => {
     loadProducts()
+    loadCategories()
   }, [id])
 
-  useEffect(() => {
-    async function loadCategories() {
-      const { data } = await api.get('categories')
-
-      data.map((category) => {
-        const categroyId = category.id
-        const categoryLabel = category.name
-
-        const categoryOption = {
-          id: `${categroyId}`,
-          label: `${categoryLabel}`,
-        }
-
-        setCategories((prevState) => [...prevState, categoryOption])
-        setModalIsOpen(false)
-      })
-    }
-    loadCategories()
-  }, [])
   useEffect(() => {
     reset(product)
     setValue('price', maskCurrency(product?.price))
@@ -112,16 +100,9 @@ function EditProduct() {
     setValue('category', product?.category_id)
   }, [product, categories])
 
-  console.log(file)
-
   return (
     <S.Container>
-      <GenericModal isOpen={modalIsOpen}>
-        <ModalContentLoading>
-          <h2>Carregando...</h2>
-          <img src={ImgLoading} alt="Loading" />
-        </ModalContentLoading>
-      </GenericModal>
+      <Molecules.LoadingModal loading={modalLoadingIsOpen} />
       <Atoms.Box>
         <form noValidate onSubmit={handleSubmit(onSubmit)}>
           <Atoms.InputComponent
@@ -183,7 +164,7 @@ function EditProduct() {
           <div style={{ marginTop: '20px' }}>
             <Atoms.SelectComponent
               label={'Selecione uma Categoria'}
-              options={categories}
+              options={formatDataSelect(categories)}
               {...register('category')}
               error={errors.category}
             />
