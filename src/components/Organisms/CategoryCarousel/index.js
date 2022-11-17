@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from 'react'
-
-import CategoryText from '../../../assets/home/categorias-text.png'
-
-import * as S from './styles'
-
 import Carousel from 'react-elastic-carousel'
-
+import CategoryText from '../../../assets/home/categorias-text.png'
+import * as Molecules from '../../../components/Molecules'
 import api from '../../../services/api'
+import * as S from './styles'
 
 export function CategoryCarousel() {
   const [categories, setCategories] = useState([])
+  const [modalLoadingIsOpen, setModalLoadingIsOpen] = useState(true)
+
+  async function loadCategories() {
+    const { data } = await api.get('categories')
+
+    setCategories(data)
+    setModalLoadingIsOpen(false)
+  }
 
   useEffect(() => {
-    async function loadCategories() {
-      const { data } = await api.get('categories')
-
-      setCategories(data)
-    }
-
     loadCategories()
   }, [])
 
@@ -32,7 +31,7 @@ export function CategoryCarousel() {
   return (
     <S.Container>
       <S.CategoryImage src={CategoryText} alt="banner da home" />
-
+      <Molecules.LoadingModal loading={modalLoadingIsOpen} />
       <Carousel
         itemsToShow={4}
         style={{ width: '90%' }}

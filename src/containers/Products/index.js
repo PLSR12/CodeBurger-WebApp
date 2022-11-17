@@ -25,7 +25,7 @@ export function Products({ location: { state } }) {
   const [products, setProducts] = useState([])
   const [filteredProducts, setFilteredProduct] = useState([])
   const [activeCategory, setActiveCategory] = useState(categoryId)
-  const [modalIsOpen, setModalIsOpen] = useState(true)
+  const [modalLoadingIsOpen, setModalLoadingIsOpen] = useState(true)
 
   useEffect(() => {
     async function loadCategories() {
@@ -35,7 +35,7 @@ export function Products({ location: { state } }) {
 
       setCategories(newCategories)
 
-      setModalIsOpen(false)
+      setModalLoadingIsOpen(false)
     }
     async function loadProducts() {
       const { data: allProducts } = await api.get('products')
@@ -45,7 +45,7 @@ export function Products({ location: { state } }) {
       })
 
       setProducts(newProducts)
-      setModalIsOpen(false)
+      setModalLoadingIsOpen(false)
     }
 
     loadProducts()
@@ -66,7 +66,7 @@ export function Products({ location: { state } }) {
 
   return (
     <>
-      <GenericModal isOpen={modalIsOpen}>
+      <GenericModal isOpen={modalLoadingIsOpen}>
         <ModalContentLoading>
           <h2>Carregando...</h2>
           <img src={ImgLoading} alt="Loading" />

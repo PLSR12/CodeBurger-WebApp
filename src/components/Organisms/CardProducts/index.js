@@ -25,7 +25,7 @@ export function CardProducts({ product }) {
             })
           }}
         >
-          Adicionar
+          Cadastrar
         </Atoms.Button>
       </div>
     </S.Container>

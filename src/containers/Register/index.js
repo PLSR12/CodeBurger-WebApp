@@ -71,11 +71,10 @@ export function Register() {
       } else if (status === 409) {
         toast.error('E-mail já cadastrado! Faça Login para continuar')
       }
+      setTimeout(() => {
+        history.push('/login')
+      }, 2500)
     } catch (err) {}
-
-    setTimeout(() => {
-      history.push('/login')
-    }, 2500)
   }
 
   const handleShowPassword = () => {

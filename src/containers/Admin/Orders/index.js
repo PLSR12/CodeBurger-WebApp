@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -5,25 +6,19 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import React, { useEffect, useState } from 'react'
-
 import api from '../../../services/api'
+import * as Molecules from '../../../components/Molecules'
 import formatDate from '../../../utils/formatDate'
 import status from './order-status'
 import Row from './row'
-
-import ImgLoading from '../../../assets/img/loading.gif'
-import GenericModal from '../../../components/Molecules/Modal/GenericModal'
-import { ModalContentLoading } from '../../../components/Molecules/Modal/styles'
-
-import { Container, LinkMenu, Menu } from './styles'
+import * as S from './styles'
 
 function Orders() {
   const [orders, setOrders] = useState([])
   const [filteredOrders, setFilteredOrders] = useState([])
   const [activeStatus, setActiveStatus] = useState(1)
   const [rows, setRows] = useState([])
-  const [modalIsOpen, setModalIsOpen] = useState(true)
+  const [modalLoadingIsOpen, setModalLoadingIsOpen] = useState(true)
 
   useEffect(() => {
     async function loadOrders() {
@@ -31,7 +26,7 @@ function Orders() {
 
       setOrders(data)
       setFilteredOrders(data)
-      setModalIsOpen(false)
+      setModalLoadingIsOpen(false)
     }
     loadOrders()
   }, [])
@@ -78,25 +73,20 @@ function Orders() {
   }
 
   return (
-    <Container>
-      <GenericModal isOpen={modalIsOpen}>
-        <ModalContentLoading>
-          <h2>Carregando...</h2>
-          <img src={ImgLoading} alt="Loading" />
-        </ModalContentLoading>
-      </GenericModal>
-      <Menu>
+    <S.Container>
+      <Molecules.LoadingModal loading={modalLoadingIsOpen} />
+      <S.Menu>
         {status &&
           status.map((status) => (
-            <LinkMenu
+            <S.LinkMenu
               key={status.id}
               onClick={() => handleStatus(status)}
               isActiveStatus={activeStatus === status.id}
             >
               {status.label}
-            </LinkMenu>
+            </S.LinkMenu>
           ))}
-      </Menu>
+      </S.Menu>
       <TableContainer component={Paper}>
         <Table aria-label="collapsible table">
           <TableHead>
@@ -120,7 +110,7 @@ function Orders() {
           </TableBody>
         </Table>
       </TableContainer>
-    </Container>
+    </S.Container>
   )
 }
 

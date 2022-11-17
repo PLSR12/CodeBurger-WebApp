@@ -2,19 +2,13 @@ import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useHistory } from 'react-router-dom'
 import { toast } from 'react-toastify'
-
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as Yup from 'yup'
-
 import api from '../../services/api'
-
 import { useUser } from '../../hooks/UserContext'
-
 import { MdVisibility, MdVisibilityOff } from 'react-icons/md'
 import Logo from '../../assets/login/logo-codeburger.svg'
-
 import * as Atoms from '../../components/Atoms'
-
 import * as S from './styles'
 
 export function Login() {
@@ -46,7 +40,6 @@ export function Login() {
         password: clientData.password,
       }),
       {
-        pending: 'Verificando seus dados',
         success: 'Login Efetuado!',
         error: 'Verifique seus Dados!',
       }

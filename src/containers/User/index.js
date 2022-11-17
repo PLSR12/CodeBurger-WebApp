@@ -25,7 +25,7 @@ export function User() {
   const { userData } = useUser()
   const [orders, setOrders] = useState([])
   const [rows, setRows] = useState([])
-  const [modalIsOpen, setModalIsOpen] = useState(true)
+  const [modalLoadingIsOpen, setModalLoadingIsOpen] = useState(true)
 
   const schema = Yup.object().shape({
     name: Yup.string().required('O name é obrigatório'),
@@ -54,7 +54,7 @@ export function User() {
       const filteredOrdersPerUser = data.filter(filterOrders)
 
       setOrders(filteredOrdersPerUser)
-      setModalIsOpen(false)
+      setModalLoadingIsOpen(false)
     }
     loadOrders()
   }, [userData])
@@ -79,7 +79,7 @@ export function User() {
 
   return (
     <S.Container>
-      <GenericModal isOpen={modalIsOpen}>
+      <GenericModal isOpen={modalLoadingIsOpen}>
         <ModalContentLoading>
           <h2>Carregando...</h2>
           <img src={ImgLoading} alt="Loading" />

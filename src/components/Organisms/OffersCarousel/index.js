@@ -1,40 +1,31 @@
 import React, { useEffect, useState } from 'react'
-
-import OffersText from '../../../assets/home/ofert-text.png'
-
-import { useCart } from '../../../hooks/CartContext'
-
-import Carousel from 'react-elastic-carousel'
 import { useHistory } from 'react-router-dom'
-import * as S from './styles'
-
-import ImgLoading from '../../../assets/img/loading.gif'
-import GenericModal from '../../../components/Molecules/Modal/GenericModal'
-import { ModalContentLoading } from '../../../components/Molecules/Modal/styles'
-import api from '../../../services/api'
+import Carousel from 'react-elastic-carousel'
+import OffersText from '../../../assets/home/ofert-text.png'
+import { useCart } from '../../../hooks/CartContext'
 import formatCurrency from '../../../utils/formatCurrency'
+import * as Molecules from '../../../components/Molecules'
+import api from '../../../services/api'
+import * as S from './styles'
 
 export function OffersCarousel() {
   const [offers, setOffers] = useState([])
   const { putProductsInCart } = useCart()
-  const [modalIsOpen, setModalIsOpen] = useState(true)
-
+  const [modalLoadingIsOpen, setModalLoadingIsOpen] = useState(true)
   const { push } = useHistory()
 
+  async function loadOffers() {
+    const { data } = await api.get('products')
+    const onlyOffers = data
+      .filter((product) => product.offer)
+      .map((product) => {
+        return { ...product, formatedPrice: formatCurrency(product.price) }
+      })
+    setOffers(onlyOffers)
+    setModalLoadingIsOpen(false)
+  }
+
   useEffect(() => {
-    async function loadOffers() {
-      const { data } = await api.get('products')
-
-      const onlyOffers = data
-        .filter((product) => product.offer)
-        .map((product) => {
-          return { ...product, formatedPrice: formatCurrency(product.price) }
-        })
-
-      setOffers(onlyOffers)
-      setModalIsOpen(false)
-    }
-
     loadOffers()
   }, [])
 
@@ -48,14 +39,8 @@ export function OffersCarousel() {
 
   return (
     <S.Container>
-      <GenericModal isOpen={modalIsOpen}>
-        <ModalContentLoading>
-          <h2>Carregando...</h2>
-          <img src={ImgLoading} alt="Loading" />
-        </ModalContentLoading>
-      </GenericModal>
+      <Molecules.LoadingModal loading={modalLoadingIsOpen} />
       <S.OffersImage src={OffersText} alt="banner da home" />
-
       <Carousel
         itemsToShow={4}
         style={{ width: '90%' }}
