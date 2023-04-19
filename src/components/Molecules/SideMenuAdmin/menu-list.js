@@ -1,0 +1,28 @@
+import BrandingWatermarkIcon from '@mui/icons-material/BrandingWatermark'
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag'
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
+
+import paths from '../../../constants/paths'
+
+const listLinks = [
+  {
+    id: 1,
+    label: 'Pedidos',
+    link: paths.Order,
+    icon: ShoppingBagIcon,
+  },
+  {
+    id: 2,
+    label: 'Produtos',
+    link: paths.Products,
+    icon: ShoppingCartIcon,
+  },
+  {
+    id: 3,
+    label: 'Categorias',
+    link: paths.Category,
+    icon: BrandingWatermarkIcon,
+  },
+]
+
+export default listLinks

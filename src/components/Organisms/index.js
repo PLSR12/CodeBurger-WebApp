@@ -1,0 +1,5 @@
+export { CardProducts } from './CardProducts'
+export { CartItems } from './CartItems'
+export { CartResume } from './CartResume'
+export { CategoryCarousel } from './CategoryCarousel'
+export { OffersCarousel } from './OffersCarousel'

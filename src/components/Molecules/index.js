@@ -1,0 +1,5 @@
+export { Header } from './Header'
+export { Modal } from './Modal'
+export { SideMenuAdmin } from './SideMenuAdmin'
+export { LoadingModal } from './Loading'
+export { Table } from './Table'
