@@ -20,14 +20,14 @@ function AppRoutes() {
         <Route path="/login" component={Login} />
         <Route path="/cadastro" component={Register} />
         <Route exact path="/" component={Home} />
-        <Route exact path="/produtos" component={Products} />
-        <Route exact path="/carrinho" component={Cart} />
-        <Route exact path="/usuario" component={User} />
+        <PrivateRoute exact path="/produtos" component={Products} />
+        <PrivateRoute exact path="/carrinho" component={Cart} />
+        <PrivateRoute exact path="/usuario" component={User} />
 
-        <Route exact path={paths.Order} component={Admin} />
-        <Route exact path={paths.Products} component={Admin} />
-        <Route exact path={paths.NewProduct} component={Admin} />
-        <Route exact path={paths.EditProduct} component={Admin} />
+        <PrivateRoute exact path={paths.Order} component={Admin} />
+        <PrivateRoute exact path={paths.Products} component={Admin} />
+        <PrivateRoute exact path={paths.NewProduct} component={Admin} />
+        <PrivateRoute exact path={paths.EditProduct} component={Admin} />
         <PrivateRoute exact path={paths.NewCategorie} component={Admin} />
         <Route exact path={paths.Category} component={Admin} />
       </Switch>
